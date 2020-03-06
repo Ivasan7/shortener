@@ -21,6 +21,12 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"fmt"
 	"strconv"
+	"errors"
+)
+
+var (
+	baseconv, _    = NewBaseConvertor(62)
+	errInvalidLink = errors.New("short link too large")
 )
 
 func main() {
@@ -28,7 +34,7 @@ func main() {
     statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS urlList (id INTEGER PRIMARY KEY, longUrl TEXT, shortUrl TEXT)")
     statement.Exec()
     statement, _ = database.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
-    statement.Exec("shortURL", "longURL")
+    statement.Exec("fake.it/"+baseconv.Encode(938641), "www.google.com")
     rows, _ := database.Query("SELECT id, longUrl, shortUrl FROM urlList")
     var id int
     var longName string
@@ -37,7 +43,6 @@ func main() {
         rows.Scan(&id, &longName, &shortName)
         fmt.Println(strconv.Itoa(id) + ": " + longName + " " + shortName)
     }	
-
 
 	cmd.Execute()
 }
