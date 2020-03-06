@@ -21,6 +21,8 @@ import (
 	"os/exec"
 	"log"
 	"github.com/spf13/cobra"
+	"net/http"
+	"io/ioutil"
 )
 
 // getCmd represents the get command
@@ -38,7 +40,8 @@ to quickly create a Cobra application.`,
 		if urlName.Value.String() == "" {
 			fmt.Println("Url must be provided")
 		} else {
-			openbrowser(urlName.Value.String())
+			//openbrowser(urlName.Value.String())
+			readAsText(urlName.Value.String())
 		}	
 	},
 }
@@ -74,5 +77,24 @@ func openbrowser(url string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+}
+
+func readAsText(url string) {
+	fmt.Printf("HTML code of %s ...\n", url)
+	resp, err := http.Get(url)
+	// handle the error if there is one
+	if err != nil {
+		panic(err)
+	}
+	// do this now so it won't be forgotten
+	defer resp.Body.Close()
+	// reads html as a slice of bytes
+	html, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	// show the HTML code as a string %s
+	fmt.Printf("%s\n", html)
 
 }
