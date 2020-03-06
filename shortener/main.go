@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "clicmd/cmd"
+import "./cmd"
 
 func main() {
 	cmd.Execute()
