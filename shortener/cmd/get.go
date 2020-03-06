@@ -17,7 +17,9 @@ package cmd
 
 import (
 	"fmt"
-
+	"runtime"
+	"os/exec"
+	"log"
 	"github.com/spf13/cobra"
 )
 
@@ -32,12 +34,18 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("get called")
+		urlName := cmd.Flag("url")
+		if urlName.Value.String() == "" {
+			fmt.Println("Url must be provided")
+		} else {
+			openbrowser(urlName.Value.String())
+		}	
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(getCmd)
+	getCmd.Flags().StringP("url","u","", "URL name")
 
 	// Here you will define your flags and configuration settings.
 
@@ -48,4 +56,23 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// getCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func openbrowser(url string) {
+	var err error
+
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
