@@ -15,8 +15,29 @@ limitations under the License.
 */
 package main
 
-import "./cmd"
+import (
+	"./cmd"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
+	"fmt"
+	"strconv"
+)
 
 func main() {
+	database, _ := sql.Open("sqlite3", "./urlList.db")
+    statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS urlList (id INTEGER PRIMARY KEY, longUrl TEXT, shortUrl TEXT)")
+    statement.Exec()
+    statement, _ = database.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
+    statement.Exec("shortURL", "longURL")
+    rows, _ := database.Query("SELECT id, longUrl, shortUrl FROM urlList")
+    var id int
+    var longName string
+    var shortName string
+    for rows.Next() {
+        rows.Scan(&id, &longName, &shortName)
+        fmt.Println(strconv.Itoa(id) + ": " + longName + " " + shortName)
+    }	
+
+
 	cmd.Execute()
 }
