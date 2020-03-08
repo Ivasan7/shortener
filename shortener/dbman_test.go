@@ -42,8 +42,6 @@ func TestDB(t *testing.T){
 	if idNum2 != 1 {
 		t.Errorf("Retrived  URL ID is not correct")	
 	}
-
-
 	defer db.close()
 	defer os.Remove(db.dbFile); if err != nil {
 		t.Errorf("DB File can not be removed")

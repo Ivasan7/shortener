@@ -130,8 +130,10 @@ func (e * DBManager) getLongUrl(shortUrl string) (int,string) {
 }
 
 func (e* DBManager) insert2DB(longUrl string, shortUrl string)  int {
-	// TODO: check if long URL alredy present, if yes, just return ID and SHORTUR
-
+	ID,name := e.getShortUrl("longUrl")
+	if ID != -1 {
+		log.Printf("The %s long URL is already present in the DB with ID: %d, shortURL: %s",longUrl,ID, name)
+	}
 	statement, err := e.db.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
 	if err != nil {
 		log.Fatal(errDBInsert)
