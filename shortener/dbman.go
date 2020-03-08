@@ -1,76 +1,138 @@
 package main
 
+import (
+	"database/sql"
+	"errors"
+	"log"
+	"os"
+	//"strconv"
+)
+type DBManager struct {
+	 db     *sql.DB
+	 itemNr int
+}
+
 var (
-	ErrInvalidDB = errors.New("Invalid DB")
+	errInvalidLink = errors.New("short link too large")
+	errDBOpen = errors.New("Database can not be opened")
+	errDBExists = errors.New("Database already exists")
+	errDBTableCreate = errors.New("Table can not be generated")
+	errDBInsert = errors.New("Insert into DB failed")
+	errDBQuery = errors.New("Query reqest failed")
+
 )
 
-
-type DBManager struct {
-	 db   DB
-}
-
 // NewBaseConvertor instantiates a new BaseConvertor object
-func NewDBManager(db string) (*DBManager, error) {
-	info, err := os.Stat(db)
-	database, _ := sql.Open("sqlite3", "./urlList.db")
-	if os.IsNotExist(err) == 0 {
-		statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS urlList (id INTEGER PRIMARY KEY, longUrl TEXT, shortUrl TEXT)")
-		statement.Exec()
-	} 
+func NewDBManager(dbIn string) (*DBManager, error) {
+	// fmt.Println(fmt.Sprintf("./%s.db", dbIn))
+	// fmt.Println(fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (id INTEGER PRIMARY KEY, longUrl TEXT, shortUrl TEXT)",dbIn))
+	// fmt.Println(fmt.Sprintf("INSERT INTO %s (longUrl, shortUrl) VALUES (?, ?)",dbIn))
+	// fmt.Println(fmt.Sprintf("SELECT id, longUrl, shortUrl FROM %s",dbIn))
+	
 
-	return &DBManager{
-		db:        database,
-	}, nil
+
+	dir, err := os.Getwd()
+	dbFile := dir + "/" +dbIn + ".db" 
+	if _, err := os.Stat(dbFile); if err == nil {
+		log.Fatal(errDBExists)
+	}
+	database, err := sql.Open("sqlite3", dbFile)
+	if err != nil {
+		log.Fatal(errDBOpen)
+	}
+	statement, err := database.Prepare("CREATE TABLE IF NOT EXISTS urlList (id INTEGER PRIMARY KEY, longUrl TEXT, shortUrl TEXT)")
+	if err != nil {
+		log.Fatal(errDBTableCreate)
+	}
+	statement.Exec()
+	statement, err = database.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
+	if err != nil {
+		fmt.Println(errDBInsert)
+	}
+	// statement.Exec("fake.it/"+baseconv.Encode(938641), "www.google.com")
+	// rows, err := database.Query(fmt.Sprintf("SELECT id, longUrl, shortUrl FROM %s",dbIn))
+	// if err != nil {
+	// 	fmt.Println(errDBQuery)
+	// }	
+	
+	// var id int
+    // var longName string
+    // var shortName string
+	// for rows.Next() {
+    //     rows.Scan(&id, &longName, &shortName)
+    //     fmt.Println(strconv.Itoa(id) + ": " + longName + " " + shortName)
+    // }	
+
+	 return &DBManager {
+		 db:        database,
+		 itemNr:    0,
+	 }, nil
 }
 
-func (e *NewDBManager) getLastID() int {
-	statement,_ := e.Prepare("INSERT table SET unique_id=? ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)")
-	res,_ := statement.Exec(unique_id)
-	lid, _ := res.LastInsertId()
+// func (e *DBManager) getLastID() int {
+// 	var  max_id int
+// 	rows,err := e.db.Query("SELECT id FROM urlList where id=max(id)")
+// 	 if err != nil {
+// 		return 0
+// 	}
+// 	i := 0
+// 	for rows.Next(){
+// 		i++
+// 		//rows.Scan(&max_id)
+// 	}
+// 	print(i)
+// 	if i == 0 {
+// 		return 0
+// 	}
 
-	return lid
-}
+//  	//res,_ := statement.Exec()
+// 	//lid, _ := res.LastInsertId()
+// 	fmt.Println(max_id)
+// 	//fmt.Println(lid) 
 
-func (e *NewDBManager) getShortLink(longUrl string) string {
-	var shortUrl string
-	sqlStmt := `SELECT shortUrl FROM urlList WHERE longUrl = ?`
-	row := e.QueryRow(sqlStmt, longUrl)
-	switch err := row.Scan(&shortUrl); err {
-	case sqlErrNoRows:
-		fmt.Println("Element "+ longUrl +" not present in DB" )	
-	case nil:
-		return shortUrl;
-	}	
-}
+//  	return max_id
+//  }
 
-func (e * NewDBManager) getLongLink(shortUrl string) string {
-	var longUrl string
-	sqlStmt := `SELECT longUrl FROM urlList WHERE shortUrl = ?`
-	row := e.QueryRow(sqlStmt, shortUrl)
-	switch err := row.Scan(&longUrl); err {
-	case sqlErrNoRows:
-		fmt.Println("Element "+ shortUrl +" not present in DB" )
-	case nil:
-		return shortUrl;
-	}	
-}
+// func (e *NewDBManager) getShortLink(longUrl string) string {
+// 	var shortUrl string
+// 	sqlStmt := `SELECT shortUrl FROM urlList WHERE longUrl = ?`
+// 	row := e.QueryRow(sqlStmt, longUrl)
+// 	switch err := row.Scan(&shortUrl); err {
+// 	case sqlErrNoRows:
+// 		fmt.Println("Element "+ longUrl +" not present in DB" )	
+// 	case nil:
+// 		return shortUrl;
+// 	}	
+// }
 
-func (e* NewDBManager) insert2DB(longUrl string, shortUrl string){
-	newID := e.getLastID() + 1
-	statement, _ = e.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
-	statement.Exec(shortUrl, longUrl)
-}
+// func (e * NewDBManager) getLongLink(shortUrl string) string {
+// 	var longUrl string
+// 	sqlStmt := `SELECT longUrl FROM urlList WHERE shortUrl = ?`
+// 	row := e.QueryRow(sqlStmt, shortUrl)
+// 	switch err := row.Scan(&longUrl); err {
+// 	case sqlErrNoRows:
+// 		fmt.Println("Element "+ shortUrl +" not present in DB" )
+// 	case nil:
+// 		return shortUrl;
+// 	}	
+// }
 
-func (e *NewDBManager)ShortLinkExists(link string) otherLink string{
-    sqlStmt := `SELECT shortUrl FROM urlList WHERE shortUrls = ?`
-    err := e.QueryRow(sqlStmt, link).Scan(&shortUrl)
-    if err != nil {
-        if err != sql.ErrNoRows {
-            log.Print(err)
-        }
+//func (e* NewDBManager) insert2DB(longUrl string, shortUrl string) {
+// 	newID := e.getLastID() + 1
+// 	statement, _ = e.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
+// 	statement.Exec(shortUrl, longUrl)
+//}
 
-        return false
-    }
+// func (e *NewDBManager)ShortLinkExists(link string) otherLink string {
+//     sqlStmt := `SELECT shortUrl FROM urlList WHERE shortUrls = ?`
+//     err := e.QueryRow(sqlStmt, link).Scan(&shortUrl)
+//     if err != nil {
+//         if err != sql.ErrNoRows {
+//             log.Print(err)
+//         }
 
-    return true
-}
+//         return false
+//     }
+
+//     return true
+// }
