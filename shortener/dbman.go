@@ -24,13 +24,6 @@ var (
 
 // NewBaseConvertor instantiates a new BaseConvertor object
 func NewDBManager(dbIn string) (*DBManager, error) {
-	// fmt.Println(fmt.Sprintf("./%s.db", dbIn))
-	// fmt.Println(fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (id INTEGER PRIMARY KEY, longUrl TEXT, shortUrl TEXT)",dbIn))
-	// fmt.Println(fmt.Sprintf("INSERT INTO %s (longUrl, shortUrl) VALUES (?, ?)",dbIn))
-	// fmt.Println(fmt.Sprintf("SELECT id, longUrl, shortUrl FROM %s",dbIn))
-	
-
-
 	dir, err := os.Getwd()
 	dbFile := dir + "/" +dbIn + ".db" 
 	if _, err := os.Stat(dbFile); if err == nil {
@@ -45,10 +38,10 @@ func NewDBManager(dbIn string) (*DBManager, error) {
 		log.Fatal(errDBTableCreate)
 	}
 	statement.Exec()
-	statement, err = database.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
-	if err != nil {
-		fmt.Println(errDBInsert)
-	}
+	// statement, err = database.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
+	// if err != nil {
+	// 	fmt.Println(errDBInsert)
+	// }
 	// statement.Exec("fake.it/"+baseconv.Encode(938641), "www.google.com")
 	// rows, err := database.Query(fmt.Sprintf("SELECT id, longUrl, shortUrl FROM %s",dbIn))
 	// if err != nil {
@@ -69,21 +62,9 @@ func NewDBManager(dbIn string) (*DBManager, error) {
 	 }, nil
 }
 
-// func (e *DBManager) getLastID() int {
-// 	var  max_id int
-// 	rows,err := e.db.Query("SELECT id FROM urlList where id=max(id)")
-// 	 if err != nil {
-// 		return 0
-// 	}
-// 	i := 0
-// 	for rows.Next(){
-// 		i++
-// 		//rows.Scan(&max_id)
-// 	}
-// 	print(i)
-// 	if i == 0 {
-// 		return 0
-// 	}
+func (e *DBManager) getLastID() int {
+	return e.itemNr
+}
 
 //  	//res,_ := statement.Exec()
 // 	//lid, _ := res.LastInsertId()
