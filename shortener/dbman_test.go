@@ -27,9 +27,20 @@ func TestDB(t *testing.T){
 		t.Errorf("Insertion test faliure")
 	}
 	// Get short URL
-	s1 := db.getShortUrl("long")
+	idNum1,s1 := db.getShortUrl("long")
+	if s1 != "short"  {
+		t.Errorf("Retrived long URL is not correct")
+	}
+	if idNum1 != 1 {
+		t.Errorf("Retrived  URL ID is not correct")	
+	}
+	// Get short URL
+	idNum2,s1 := db.getShortUrl("long")
 	if s1 != "short" {
 		t.Errorf("Retrived long URL is not correct")
+	}
+	if idNum2 != 1 {
+		t.Errorf("Retrived  URL ID is not correct")	
 	}
 
 
