@@ -6,7 +6,6 @@ import (
 	"errors"
 	"log"
 	"os"
-	//"strconv"
 )
 type DBManager struct {
 	 db     *sql.DB
@@ -24,7 +23,6 @@ var (
 
 )
 
-// NewBaseConvertor instantiates a new BaseConvertor object
 func NewDBManager(dbIn string) (*DBManager, error) {
 	dir, err := os.Getwd()
 	dbFile := dir + "/" +dbIn + ".db" 
@@ -41,23 +39,6 @@ func NewDBManager(dbIn string) (*DBManager, error) {
 		log.Fatal(errDBTableCreate)
 	}
 	statement.Exec()
-	// statement, err = database.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
-	// if err != nil {
-	// 	fmt.Println(errDBInsert)
-	// }
-	// statement.Exec("fake.it/"+baseconv.Encode(938641), "www.google.com")
-	// rows, err := database.Query(fmt.Sprintf("SELECT id, longUrl, shortUrl FROM %s",dbIn))
-	// if err != nil {
-	// 	fmt.Println(errDBQuery)
-	// }	
-	
-	// var id int
-    // var longName string
-    // var shortName string
-	// for rows.Next() {
-    //     rows.Scan(&id, &longName, &shortName)
-    //     fmt.Println(strconv.Itoa(id) + ": " + longName + " " + shortName)
-    // }	
 
 	 return &DBManager {
 		 db:        database,
@@ -93,7 +74,7 @@ func (e *DBManager) getUrlByID(ID int) (string,string) {
 	  return shortUrl,longUrl
 	default:
 	  panic(err)
-}
+	}
 
 }
 
