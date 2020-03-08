@@ -34,9 +34,9 @@ func TestDB(t *testing.T){
 	if idNum1 != 1 {
 		t.Errorf("Retrived  URL ID is not correct")	
 	}
-	// Get short URL
-	idNum2,s1 := db.getShortUrl("long")
-	if s1 != "short" {
+	// Get long URL
+	idNum2,s2 := db.getLongUrl("short")
+	if s2 != "long" {
 		t.Errorf("Retrived long URL is not correct")
 	}
 	if idNum2 != 1 {

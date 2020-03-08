@@ -113,7 +113,7 @@ func (e *DBManager) getShortUrl(longUrl string) (int,string) {
 	}
 }
 
-func (e * DBManager) getLongLink(shortUrl string) (int,string) {
+func (e * DBManager) getLongUrl(shortUrl string) (int,string) {
 	var longUrl string
 	var ID int
 	sqlStmt := `SELECT id,longUrl FROM urlList WHERE shortUrl = ?`
@@ -130,7 +130,8 @@ func (e * DBManager) getLongLink(shortUrl string) (int,string) {
 }
 
 func (e* DBManager) insert2DB(longUrl string, shortUrl string)  int {
-	// TODO: check if long URL alredy present, if yes, just return ID and SHORTURL
+	// TODO: check if long URL alredy present, if yes, just return ID and SHORTUR
+
 	statement, err := e.db.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
 	if err != nil {
 		log.Fatal(errDBInsert)
@@ -139,19 +140,3 @@ func (e* DBManager) insert2DB(longUrl string, shortUrl string)  int {
 	e.incrementID()
 	return e.getLastID()
 }
-
-
-
-// func (e *NewDBManager)ShortLinkExists(link string) otherLink string {
-//     sqlStmt := `SELECT shortUrl FROM urlList WHERE shortUrls = ?`
-//     err := e.QueryRow(sqlStmt, link).Scan(&shortUrl)
-//     if err != nil {
-//         if err != sql.ErrNoRows {
-//             log.Print(err)
-//         }
-
-//         return false
-//     }
-
-//     return true
-// }
