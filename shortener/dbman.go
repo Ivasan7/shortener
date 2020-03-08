@@ -97,17 +97,20 @@ func (e *DBManager) getUrlByID(ID int) (string,string) {
 
 }
 
-// func (e *NewDBManager) getShortLink(longUrl string) string {
-// 	var shortUrl string
-// 	sqlStmt := `SELECT shortUrl FROM urlList WHERE longUrl = ?`
-// 	row := e.QueryRow(sqlStmt, longUrl)
-// 	switch err := row.Scan(&shortUrl); err {
-// 	case sqlErrNoRows:
-// 		fmt.Println("Element "+ longUrl +" not present in DB" )	
-// 	case nil:
-// 		return shortUrl;
-// 	}	
-// }
+func (e *DBManager) getShortUrl(longUrl string) string {
+	var shortUrl string
+	sqlStmt := `SELECT shortUrl FROM urlList WHERE longUrl = ?`
+	row := e.db.QueryRow(sqlStmt, longUrl)
+	switch err := row.Scan(&shortUrl); err {
+	case sql.ErrNoRows:
+		log.Println("Element "+ longUrl +" not present in DB" )
+		return ""
+	case nil:
+		return shortUrl
+	default:
+		panic(err)
+	}
+}
 
 // func (e * NewDBManager) getLongLink(shortUrl string) string {
 // 	var longUrl string
@@ -122,6 +125,7 @@ func (e *DBManager) getUrlByID(ID int) (string,string) {
 // }
 
 func (e* DBManager) insert2DB(longUrl string, shortUrl string)  int {
+	// TODO: check if long URL alredy present, if yes, just return ID and SHORTURL
 	statement, err := e.db.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
 	if err != nil {
 		log.Fatal(errDBInsert)

@@ -26,7 +26,11 @@ func TestDB(t *testing.T){
 	if s != "short" && l != "long"{
 		t.Errorf("Insertion test faliure")
 	}
-
+	// Get short URL
+	s1 := db.getShortUrl("long")
+	if s1 != "short" {
+		t.Errorf("Retrived long URL is not correct")
+	}
 
 
 	defer db.close()
