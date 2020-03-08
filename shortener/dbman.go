@@ -11,6 +11,7 @@ import (
 type DBManager struct {
 	 db     *sql.DB
 	 itemNr int
+	 dbFile string
 }
 
 var (
@@ -61,11 +62,39 @@ func NewDBManager(dbIn string) (*DBManager, error) {
 	 return &DBManager {
 		 db:        database,
 		 itemNr:    0,
+		 dbFile: dbFile,
 	 }, nil
 }
 
 func (e *DBManager) getLastID() int {
 	return e.itemNr
+}
+
+func (e *DBManager) incrementID() {
+	e.itemNr = e.itemNr + 1 
+}
+
+func (e *DBManager) close() {
+	e.db.Close()
+}
+
+func (e *DBManager) getUrlByID(ID int) (string,string) {
+	sqlStatement := `SELECT shortUrl, longUrl FROM urlList WHERE id=$1;`
+	var shortUrl string
+	var longUrl string
+
+	row := e.db.QueryRow(sqlStatement, ID)
+	switch err := row.Scan(&shortUrl, &longUrl); err {
+	case sql.ErrNoRows:
+	  log.Println("No rows were returned!")
+	  return "",""
+	case nil:
+	  log.Printf("The following links has been inserted. ID: %d, shortUrl: %s, longUrl: %s ",ID,shortUrl, longUrl)
+	  return shortUrl,longUrl
+	default:
+	  panic(err)
+}
+
 }
 
 // func (e *NewDBManager) getShortLink(longUrl string) string {
@@ -92,11 +121,17 @@ func (e *DBManager) getLastID() int {
 // 	}	
 // }
 
-//func (e* NewDBManager) insert2DB(longUrl string, shortUrl string) {
-// 	newID := e.getLastID() + 1
-// 	statement, _ = e.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
-// 	statement.Exec(shortUrl, longUrl)
-//}
+func (e* DBManager) insert2DB(longUrl string, shortUrl string)  int {
+	statement, err := e.db.Prepare("INSERT INTO urlList (longUrl, shortUrl) VALUES (?, ?)")
+	if err != nil {
+		log.Fatal(errDBInsert)
+	}
+	statement.Exec(shortUrl, longUrl)
+	e.incrementID()
+	return e.getLastID()
+}
+
+
 
 // func (e *NewDBManager)ShortLinkExists(link string) otherLink string {
 //     sqlStmt := `SELECT shortUrl FROM urlList WHERE shortUrls = ?`
