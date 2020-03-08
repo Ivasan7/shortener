@@ -17,7 +17,6 @@ package main
 
 import (
 //	"./cmd"
-	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	//"fmt"
 	//"strconv"
@@ -31,10 +30,8 @@ var (
 
 func main() {
 	dir, _ := os.Getwd()
-	database, _ := sql.Open("sqlite3", dir + "/test.db")
-    statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, longUrl TEXT, shortUrl TEXT)")
-	statement.Exec()
-	NewDBManager("test1")
+	DB, _ := NewDBManager("test1")
+	fmt.Println(DB.getLastID())
 
 
 	// database, _ := sql.Open("sqlite3", "./urlList.db")

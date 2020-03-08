@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 	"errors"
 	"log"
 	"os"
@@ -15,7 +16,7 @@ type DBManager struct {
 var (
 	errInvalidLink = errors.New("short link too large")
 	errDBOpen = errors.New("Database can not be opened")
-	errDBExists = errors.New("Database already exists")
+	errDBExists = errors.New("Database already exists: ")
 	errDBTableCreate = errors.New("Table can not be generated")
 	errDBInsert = errors.New("Insert into DB failed")
 	errDBQuery = errors.New("Query reqest failed")
@@ -26,9 +27,10 @@ var (
 func NewDBManager(dbIn string) (*DBManager, error) {
 	dir, err := os.Getwd()
 	dbFile := dir + "/" +dbIn + ".db" 
-	if _, err := os.Stat(dbFile); if err == nil {
+	if _, err := os.Stat(dbFile); err == nil {
 		log.Fatal(errDBExists)
 	}
+
 	database, err := sql.Open("sqlite3", dbFile)
 	if err != nil {
 		log.Fatal(errDBOpen)
@@ -65,14 +67,6 @@ func NewDBManager(dbIn string) (*DBManager, error) {
 func (e *DBManager) getLastID() int {
 	return e.itemNr
 }
-
-//  	//res,_ := statement.Exec()
-// 	//lid, _ := res.LastInsertId()
-// 	fmt.Println(max_id)
-// 	//fmt.Println(lid) 
-
-//  	return max_id
-//  }
 
 // func (e *NewDBManager) getShortLink(longUrl string) string {
 // 	var shortUrl string
