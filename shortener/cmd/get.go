@@ -36,22 +36,22 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("PRINTING")
 		shortUrlName := cmd.Flag("shortUrl")
 		longUrlName := cmd.Flag("longUrl")
 		if shortUrlName.Value.String() == "" && longUrlName.Value.String() == "" {
 			fmt.Println("Short or Long Url name must be provided")
-		} else {			
+		} else {
 			if longUrlName.Value.String() != "" {
+				// TODO remove duplication of code
 				//openbrowser(longUrlName.Value.String())
-				//readAsText(longUrlName.Value.String())
+				readAsText("http://" +longUrlName.Value.String())
 			} else {
-				ID,shortUrl := DB.GetLongUrl(shortUrlName.Value.String())
+				ID,longUrl := DB.GetLongUrl(shortUrlName.Value.String())
 				if ID == -1 {
-					log.Fatalf("URL is not recognised: %s", shortUrl)
+					log.Fatalf("URL is not recognised: %s", longUrl)
 				}
 				//openbrowser(shortUrl)
-				//readAsText(shortUrl)	
+				readAsText("http://" + longUrl)	
 			}
 		}	
 	},
