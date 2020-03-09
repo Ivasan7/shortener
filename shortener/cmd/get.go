@@ -36,20 +36,31 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		urlName := cmd.Flag("url")
-		if urlName.Value.String() == "" {
-			fmt.Println("Url must be provided")
-		} else {
-			//openbrowser(urlName.Value.String())
-			readAsText(urlName.Value.String())
+		fmt.Println("PRINTING")
+		shortUrlName := cmd.Flag("shortUrl")
+		longUrlName := cmd.Flag("longUrl")
+		if shortUrlName.Value.String() == "" && longUrlName.Value.String() == "" {
+			fmt.Println("Short or Long Url name must be provided")
+		} else {			
+			if longUrlName.Value.String() != "" {
+				//openbrowser(longUrlName.Value.String())
+				//readAsText(longUrlName.Value.String())
+			} else {
+				ID,shortUrl := DB.GetLongUrl(shortUrlName.Value.String())
+				if ID == -1 {
+					log.Fatalf("URL is not recognised: %s", shortUrl)
+				}
+				//openbrowser(shortUrl)
+				//readAsText(shortUrl)	
+			}
 		}	
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(getCmd)
-	getCmd.Flags().StringP("url","u","", "URL name")
-
+	getCmd.Flags().StringP("shortUrl","s","", "short URL name")
+	getCmd.Flags().StringP("longUrl","l","", " long URL name")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

@@ -19,13 +19,18 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
-
+	"../baseconv"
+	"../dbman"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
 
+var (
+	baseconverter, _    = baseconv.NewBaseConvertor(62)
+	DB, _ = dbman.NewDBManager("prod")
+)
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "clicmd",

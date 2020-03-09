@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"fmt"
-	//"strings"
+	"log"
 	"github.com/spf13/cobra"
 )
 
@@ -37,6 +37,10 @@ to quickly create a Cobra application.`,
 			fmt.Println("Shorten command is called")
 		} else {
 			fmt.Println("The argument is : " + urlName.Value.String())
+			var longUrl string = urlName.Value.String()
+			var shortUrl string = "fake.it/" + baseconverter.Encode(uint(DB.GetLastID()+1))
+			ID := DB.Insert2DB(longUrl,shortUrl)
+			log.Printf("The new URL is inserted. ID: %d, long URL: %s, short URL: %s",ID,shortUrl,longUrl)
 		}	
 	},
 }

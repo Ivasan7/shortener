@@ -1,4 +1,4 @@
-package main
+package dbman
 
 import (
 	"database/sql"
@@ -9,7 +9,6 @@ import (
 )
 type DBManager struct {
 	 db     *sql.DB
-	 itemNr int
 	 dbFile string
 }
 
@@ -26,9 +25,6 @@ var (
 func NewDBManager(dbIn string) (*DBManager, error) {
 	dir, err := os.Getwd()
 	dbFile := dir + "/" +dbIn + ".db" 
-	if _, err := os.Stat(dbFile); err == nil {
-		log.Fatal(errDBExists)
-	}
 
 	database, err := sql.Open("sqlite3", dbFile)
 	if err != nil {
@@ -42,24 +38,25 @@ func NewDBManager(dbIn string) (*DBManager, error) {
 
 	 return &DBManager {
 		 db:        database,
-		 itemNr:    0,
 		 dbFile: dbFile,
 	 }, nil
 }
 
-func (e *DBManager) getLastID() int {
-	return e.itemNr
+func (e *DBManager) GetLastID() int {
+	//return e.itemNr
+	sqlStatement := `SELECT MAX(id) from urlList`
+	var maxId int
+
+	row := e.db.QueryRow(sqlStatement)
+	row.Scan(&maxId)
+	return maxId
 }
 
-func (e *DBManager) incrementID() {
-	e.itemNr = e.itemNr + 1 
-}
-
-func (e *DBManager) close() {
+func (e *DBManager) Close() {
 	e.db.Close()
 }
 
-func (e *DBManager) getUrlByID(ID int) (string,string) {
+func (e *DBManager) GetUrlByID(ID int) (string,string) {
 	sqlStatement := `SELECT shortUrl, longUrl FROM urlList WHERE id=$1;`
 	var shortUrl string
 	var longUrl string
@@ -78,7 +75,7 @@ func (e *DBManager) getUrlByID(ID int) (string,string) {
 
 }
 
-func (e *DBManager) getShortUrl(longUrl string) (int,string) {
+func (e *DBManager) GetShortUrl(longUrl string) (int,string) {
 	var shortUrl string
 	var ID int
 	sqlStmt := `SELECT id,shortUrl FROM urlList WHERE longUrl = ?`
@@ -94,7 +91,7 @@ func (e *DBManager) getShortUrl(longUrl string) (int,string) {
 	}
 }
 
-func (e * DBManager) getLongUrl(shortUrl string) (int,string) {
+func (e * DBManager) GetLongUrl(shortUrl string) (int,string) {
 	var longUrl string
 	var ID int
 	sqlStmt := `SELECT id,longUrl FROM urlList WHERE shortUrl = ?`
@@ -110,8 +107,8 @@ func (e * DBManager) getLongUrl(shortUrl string) (int,string) {
 	}	
 }
 
-func (e* DBManager) insert2DB(longUrl string, shortUrl string)  int {
-	ID,name := e.getShortUrl("longUrl")
+func (e* DBManager) Insert2DB(longUrl string, shortUrl string)  int {
+	ID,name := e.GetShortUrl("longUrl")
 	if ID != -1 {
 		log.Printf("The %s long URL is already present in the DB with ID: %d, shortURL: %s",longUrl,ID, name)
 	}
@@ -120,6 +117,5 @@ func (e* DBManager) insert2DB(longUrl string, shortUrl string)  int {
 		log.Fatal(errDBInsert)
 	}
 	statement.Exec(shortUrl, longUrl)
-	e.incrementID()
-	return e.getLastID()
+	return e.GetLastID()
 }

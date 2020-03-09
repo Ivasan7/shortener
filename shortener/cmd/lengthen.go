@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"fmt"
-
+	"log"
 	"github.com/spf13/cobra"
 )
 
@@ -32,13 +32,24 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("lengthen called")
+		urlName := cmd.Flag("url")
+		if urlName.Value.String() == "" {
+			fmt.Println("Shorten command is called")
+		} else {
+			fmt.Println("The argument is : " + urlName.Value.String())
+			ID,longUrl := DB.GetLongUrl(urlName.Value.String())
+			if ID == -1 {
+				log.Fatalf("URL is not recognised: %s", urlName.Value.String())
+			} else {
+				log.Printf("The original URL is: %s with ID: %d", longUrl, ID)
+			}
+		}	
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(lengthenCmd)
-
+	lengthenCmd.Flags().StringP("url","u","", "URL name")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
