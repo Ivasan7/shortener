@@ -40,7 +40,7 @@ to quickly create a Cobra application.`,
 			var longUrl string = urlName.Value.String()
 			var shortUrl string = "fake.it/" + baseconverter.Encode(uint(DB.GetLastID()+1))
 			ID := DB.Insert2DB(longUrl,shortUrl)
-			log.Printf("The new URL is inserted. ID: %d, long URL: %s, short URL: %s",ID,shortUrl,longUrl)
+			log.Printf("The new URL is inserted. ID: %d, long URL: %s, short URL: %s",ID,longUrl,shortUrl)
 		}	
 	},
 }

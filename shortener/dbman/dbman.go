@@ -116,6 +116,6 @@ func (e* DBManager) Insert2DB(longUrl string, shortUrl string)  int {
 	if err != nil {
 		log.Fatal(errDBInsert)
 	}
-	statement.Exec(shortUrl, longUrl)
+	statement.Exec(longUrl,shortUrl)
 	return e.GetLastID()
 }

@@ -25,6 +25,7 @@ import (
 	"io/ioutil"
 )
 
+var openInBrowser bool
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
@@ -43,15 +44,22 @@ to quickly create a Cobra application.`,
 		} else {
 			if longUrlName.Value.String() != "" {
 				// TODO remove duplication of code
-				//openbrowser(longUrlName.Value.String())
-				readAsText("http://" +longUrlName.Value.String())
+				if openInBrowser {
+					openbrowser(longUrlName.Value.String())
+				} else {
+					readAsText("http://" +longUrlName.Value.String())
+				}
 			} else {
 				ID,longUrl := DB.GetLongUrl(shortUrlName.Value.String())
 				if ID == -1 {
 					log.Fatalf("URL is not recognised: %s", longUrl)
 				}
-				//openbrowser(shortUrl)
-				readAsText("http://" + longUrl)	
+				if openInBrowser {
+					openbrowser(longUrl)
+				} else {
+					log.Printf("Fetching %s",longUrl)
+					readAsText("http://" + longUrl)	
+				}
 			}
 		}	
 	},
@@ -61,6 +69,7 @@ func init() {
 	rootCmd.AddCommand(getCmd)
 	getCmd.Flags().StringP("shortUrl","s","", "short URL name")
 	getCmd.Flags().StringP("longUrl","l","", " long URL name")
+	getCmd.Flags().BoolVar(&openInBrowser,"o",false,"open in browser")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
