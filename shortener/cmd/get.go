@@ -29,13 +29,16 @@ var openInBrowser bool
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Fetching long or short URLs",
+	Long: `Fetching URLs either from conventional format or short format.
+	 The short format first has to be generated. For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	./shortener get -l google.com OR
+	./shortener get -s fake.it/1
+	
+	Running the app natively gives the option to open the URL in the browser
+	by providing the -o flag
+	./shortener get -l google.com -o`,
 	Run: func(cmd *cobra.Command, args []string) {
 		shortUrlName := cmd.Flag("shortUrl")
 		longUrlName := cmd.Flag("longUrl")

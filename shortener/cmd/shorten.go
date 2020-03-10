@@ -24,13 +24,10 @@ import (
 // shortenCmd represents the shorten command
 var shortenCmd = &cobra.Command{
 	Use:   "shorten",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Shortens and stores the URl",
+	Long: `This command shortens and stores the URL. For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	./shortener shorten -u google.com`,
 	Run: func(cmd *cobra.Command, args []string) {
 		urlName := cmd.Flag("url")
 		if urlName.Value.String() == "" {

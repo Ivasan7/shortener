@@ -34,13 +34,15 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "clicmd",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "Application to generate shortened URLs",
+	Long: `The application helps the users to generate fetch shortened URLs. For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	./shortener shorten -u google.com
+	OUTPUT:
+	ID:1 Long URL: google.com short URL: fake.it/1
+	
+	Fetch it:
+	./shortener get -s fake.it/1`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
