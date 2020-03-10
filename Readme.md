@@ -5,12 +5,12 @@ or well known google services.
 
 ## Basic operating principle
 * Get URL
-  * Possible to get a standard URL in text form or open in the browser
-  * Get a short URL, text or browser
+  * Possible to get a standard websiste based on its URL and fethc it in text form or open in the browser
+  * Fetch based on short URL, text or browser
 * Lengthen URL
-  * Look up short URL original names
+  * Look up short URL original name
 * Shorten URL
-  * Generate short URL and store it in the DB
+  * Generate short URL and store it
 
 ## User instructions
 Assumes docker is installed on the host computer
@@ -20,7 +20,7 @@ Assumes docker is installed on the host computer
 4. `docker run -it <image name> /bin/bash`
 5. (cd code/shortener) -> supposed to start up in this directory
 5. `shortener -h`
-6. On Linux systems the binary can be copied out and used natively so the open in browser functinality is available.
+6. On Linux systems the binary can be copied out and used natively so the "open in browser" functinality is available.
   (docker cp...)
 
 ## Developer mode
@@ -38,6 +38,7 @@ Assumes docker is installed on the host computer
 2. Application level itegration/regressions tests
 3. Remove code duplication in some places
 4. Remove the necessity of storing the short URL-s
-  * Long URL's can be found buy decoding the URI after fake.it/URI which provides ID of the original URL to be fetched
+  * Long URL's can be found buy decoding the URI after `fake.it/<URI>` , which provides ID of the original URL to be fetched
+  This increases performance and consumes less resources.
 5. Cross compilation does not work correctly
-  * for mac do env GOOS="darwin" go build -o <name> main.go, however the application is poroducing error, likely incompatibility with the SQLlite3 driver.
+  * for mac do `env GOOS="darwin" go build -o <name> main.go`, however the application is producing errors, likely incompatibility with the SQLlite3 driver.
