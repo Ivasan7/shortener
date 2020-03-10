@@ -24,7 +24,7 @@ Assumes docker is installed on the host computer
   (docker cp...)
 
 ## Developer mode
-1. Repear steps 1-3
+1. Repear steps `1-3`
 2. `docker run -it -v <abs/path/to/repo>:/code <image name> /bin/bash`
   (pontentially volume mount can also be used, here binding mount due to simplicity of use)
 3. Run the tests
@@ -38,7 +38,7 @@ Assumes docker is installed on the host computer
 2. Application level itegration/regressions tests
 3. Remove code duplication in some places
 4. Remove the necessity of storing the short URL-s
-  * Long URL's can be found buy decoding the URI after `fake.it/<URI>` , which provides ID of the original URL to be fetched
+  * Long URL's can be found buy decoding the URI after `fake.it/<URI>` , which provides ID of the original URL to be fetched.
   This increases performance and consumes less resources.
 5. Cross compilation does not work correctly
   * for mac do `env GOOS="darwin" go build -o <name> main.go`, however the application is producing errors, likely incompatibility with the SQLlite3 driver.
