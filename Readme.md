@@ -42,4 +42,6 @@ Assumes docker is installed on the host computer
   This increases performance and consumes less resources.
 5. Cross compilation does not work correctly
   * for mac do `env GOOS="darwin" go build -o <name> main.go`, however the application is producing errors, likely incompatibility with the SQLlite3 driver.
-6. Extending the application to a server could be easily done via (e.g.) gRPC. See: https://grpc.io/docs/tutorials/basic/go/
+6. Extending the application to a server-client app could be easily done via (e.g.) gRPC. See: https://grpc.io/docs/tutorials/basic/go/ 
+or 
+HTTP server(REST) https://golang.org/doc/articles/wiki/
